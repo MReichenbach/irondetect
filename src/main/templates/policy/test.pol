@@ -9,7 +9,7 @@ anomaly {
 }
 
 signature {
-	sigAppName := "smartphone.android.os.smartphone.android.os.FirmwareVersion" = "4.1.1";	
+	sigAppName := "smartphone.android.os.FirmwareVersion" = "1.11.1";	
 }
 
 condition {

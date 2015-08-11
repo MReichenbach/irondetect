@@ -18,7 +18,7 @@
  * Email: trust@f4-i.fh-hannover.de
  * Website: http://trust.f4.hs-hannover.de/
  * 
- * This file is part of irondetect, version 0.0.8, 
+ * This file is part of irondetect, version 0.0.8,
  * implemented by the Trust@HsH research group at the Hochschule Hannover.
  * %%
  * Copyright (C) 2010 - 2015 Trust@HsH
@@ -66,12 +66,13 @@ import de.hshannover.f4.trust.irondetect.model.TrustLog;
 import de.hshannover.f4.trust.irondetect.repository.FeatureBase;
 import de.hshannover.f4.trust.irondetect.repository.FeatureBaseImpl;
 import de.hshannover.f4.trust.irondetect.util.Pair;
+import de.hshannover.f4.trust.irondetect.util.PollResultReceiver;
 
 /**
  * @author bahellma
  *
  */
-public class IfmapToFeatureMapper implements Runnable {
+public class IfmapToFeatureMapper implements Runnable, PollResultReceiver {
 
     private static Logger logger = Logger.getLogger(IfmapToFeatureMapper.class);
     private FeatureBase featureBase;
@@ -277,7 +278,7 @@ public class IfmapToFeatureMapper implements Runnable {
                                 tl.setProcessProviderSecurityPropertyRatings(this.parseRating(elems.item(i).getTextContent()));
                             } else if (nodeName.equalsIgnoreCase("spr-transmit-provider-receiver")) {
                                 tl.setTransmitProviderSecurityPropertyRatings(this.parseRating(elems.item(i).getTextContent()));
-                            } 
+                            }
                         }
                     }
                 }
@@ -307,7 +308,8 @@ public class IfmapToFeatureMapper implements Runnable {
      *
      * @param pollResult the new {@link PollResult} to submit
      */
-    public void submitNewSearchResult(PollResult pollResult) {
+	@Override
+	public void submitNewPollResult(PollResult pollResult) {
         try {
             incomingResults.put(pollResult);
             logger.trace("PollhResult was inserted");

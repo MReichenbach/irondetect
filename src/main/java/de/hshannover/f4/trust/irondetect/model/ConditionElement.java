@@ -18,7 +18,7 @@
  * Email: trust@f4-i.fh-hannover.de
  * Website: http://trust.f4.hs-hannover.de/
  * 
- * This file is part of irondetect, version 0.0.8, 
+ * This file is part of irondetect, version 0.0.8,
  * implemented by the Trust@HsH research group at the Hochschule Hannover.
  * %%
  * Copyright (C) 2010 - 2015 Trust@HsH
@@ -56,7 +56,7 @@ import de.hshannover.f4.trust.irondetect.repository.FeatureBaseImpl;
  * @author jvieweg
  *
  */
-public abstract class ConditionElement extends Evaluable {
+public abstract class ConditionElement extends Evaluable implements PolicyData {
 
     private List<Context> contextSet;
     private Logger logger = Logger.getLogger(this.getClass());

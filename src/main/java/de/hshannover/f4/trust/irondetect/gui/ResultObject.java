@@ -18,7 +18,7 @@
  * Email: trust@f4-i.fh-hannover.de
  * Website: http://trust.f4.hs-hannover.de/
  * 
- * This file is part of irondetect, version 0.0.8, 
+ * This file is part of irondetect, version 0.0.8,
  * implemented by the Trust@HsH research group at the Hochschule Hannover.
  * %%
  * Copyright (C) 2010 - 2015 Trust@HsH
@@ -50,7 +50,7 @@ public class ResultObject {
 	
 	private String device;
 
-	private String type;
+	private ResultObjectType type;
 
 	private String id;
 
@@ -58,7 +58,7 @@ public class ResultObject {
 
 	private String timestamp;
 
-	public ResultObject(String device, String type, String id, boolean value) {
+	public ResultObject(String device, ResultObjectType type, String id, boolean value) {
 		super();
 		this.index = "0";
 		this.device = device;
@@ -80,7 +80,7 @@ public class ResultObject {
 		return this.device;
 	}
 
-	public String getType() {
+	public ResultObjectType getType() {
 		return this.type;
 	}
 

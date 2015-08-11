@@ -18,7 +18,7 @@
  * Email: trust@f4-i.fh-hannover.de
  * Website: http://trust.f4.hs-hannover.de/
  * 
- * This file is part of irondetect, version 0.0.8, 
+ * This file is part of irondetect, version 0.0.8,
  * implemented by the Trust@HsH research group at the Hochschule Hannover.
  * %%
  * Copyright (C) 2010 - 2015 Trust@HsH
@@ -42,6 +42,7 @@
 package de.hshannover.f4.trust.irondetect.model;
 
 
+import static de.hshannover.f4.trust.irondetect.gui.ResultObjectType.ANOMALY;
 
 import java.util.List;
 
@@ -52,8 +53,6 @@ import de.hshannover.f4.trust.irondetect.gui.ResultLogger;
 import de.hshannover.f4.trust.irondetect.gui.ResultLoggerImpl;
 import de.hshannover.f4.trust.irondetect.util.BooleanOperator;
 import de.hshannover.f4.trust.irondetect.util.Pair;
-
-import java.util.ArrayList;
 
 /**
  *
@@ -142,7 +141,7 @@ public class Anomaly extends ConditionElement {
         boolean result = evaluateHintSet(device);
         long eTime = System.currentTimeMillis();
         logger.info("--------------------Anomaly " + this.id + " eval finished with " + result + "--------------------");
-        rlogger.reportResultsToLogger(device, id, Anomaly.class.getSimpleName(), result);
+		rlogger.reportResultsToLogger(device, id, ANOMALY, result);
         super.printTimedResult(getClass(), result, eTime - sTime);
         return result;
 

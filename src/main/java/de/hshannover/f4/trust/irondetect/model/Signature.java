@@ -18,7 +18,7 @@
  * Email: trust@f4-i.fh-hannover.de
  * Website: http://trust.f4.hs-hannover.de/
  * 
- * This file is part of irondetect, version 0.0.8, 
+ * This file is part of irondetect, version 0.0.8,
  * implemented by the Trust@HsH research group at the Hochschule Hannover.
  * %%
  * Copyright (C) 2010 - 2015 Trust@HsH
@@ -42,6 +42,12 @@
 package de.hshannover.f4.trust.irondetect.model;
 
 
+import static de.hshannover.f4.trust.irondetect.gui.ResultObjectType.SIGNATURE;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
 
 import de.hshannover.f4.trust.irondetect.engine.Processor;
 import de.hshannover.f4.trust.irondetect.gui.ResultLogger;
@@ -49,11 +55,6 @@ import de.hshannover.f4.trust.irondetect.gui.ResultLoggerImpl;
 import de.hshannover.f4.trust.irondetect.util.BooleanOperator;
 import de.hshannover.f4.trust.irondetect.util.ComparisonOperator;
 import de.hshannover.f4.trust.irondetect.util.Pair;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.log4j.Logger;
 
 /**
  * @author jvieweg
@@ -148,7 +149,7 @@ public class Signature extends ConditionElement {
 
         //build the real set of featureExpressions which includes all instances
         //this is done by creating a set of feature expression which holds all features that were
-        //received from the feature base, additionally count features are flagged in the second step 
+        //received from the feature base, additionally count features are flagged in the second step
         logger.trace("preparing feature values");
         //first step with normal features
         for (Feature feature : fVals) {
@@ -162,9 +163,9 @@ public class Signature extends ConditionElement {
                         rightFeatureVals.add(p.getFirstElement().getFeatureValuePair().getSecondElement().getSecondElement().substring(1));
                         List<Feature> getValues = getFeatureValues(device, rightFeatureVals);
                         for (Feature featureRight : getValues) {
-                            FeatureExpression f = new FeatureExpression(feature, new Pair<String, Pair<ComparisonOperator, 
-                                    String>>(p.getFirstElement().getFeatureId(), new Pair<ComparisonOperator, 
-                                    String>(p.getFirstElement().getFeatureValuePair().getSecondElement().getFirstElement(), 
+                            FeatureExpression f = new FeatureExpression(feature, new Pair<String, Pair<ComparisonOperator,
+                                    String>>(p.getFirstElement().getFeatureId(), new Pair<ComparisonOperator,
+                                    String>(p.getFirstElement().getFeatureValuePair().getSecondElement().getFirstElement(),
                                     featureRight.getValue())), p.getFirstElement().getId(), p.getFirstElement().getScope());
                             f.setStep(step);
                             featureExpr.add(f);
@@ -229,7 +230,7 @@ public class Signature extends ConditionElement {
                 logger.trace("found countkey- counting...");
                 for (Feature feature : fValsCount) {
                     for (FeatureExpression fE : featureExpr) {
-                        //check if the FE we are currently evaluating shall be evaluated by having a look onto 
+                        //check if the FE we are currently evaluating shall be evaluated by having a look onto
                         //the current signature part (outer loop)
                         if (feature.getQualifiedIdWithoutInstance().equals(p.getFirstElement().getFeatureId().substring(1))) {
                             //do the ids match, is it a valid FE and is it a countable expression
@@ -293,7 +294,7 @@ public class Signature extends ConditionElement {
                             }
                         } /*else {
                          logger.trace("--> FE not valid or counter: " + fE.getFeature().getQualifiedId() + ", value is " + fE.getFeature().getValue());
-                         logger.trace("fEIsValid = " + fE.isValid() + ", fe.isCounter = " + fE.isCounter() + ",fe.isTagged = " + fE.isTagged() + 
+                         logger.trace("fEIsValid = " + fE.isValid() + ", fe.isCounter = " + fE.isCounter() + ",fe.isTagged = " + fE.isTagged() +
                          ", fe.isRevalidated = " + fE.isRevalidated());
                          }*/
                     }
@@ -341,7 +342,7 @@ public class Signature extends ConditionElement {
             if (op == BooleanOperator.AND && !result) {
                 logger.debug("step evaluation returned false... nothing more to do");
                 logger.info("------------------------------Sig eval " + this.getId() + " finished with false----------------------");
-                rlogger.reportResultsToLogger(device, this.id, this.getClass().getSimpleName(), false);
+				rlogger.reportResultsToLogger(device, this.id, SIGNATURE, false);
                 super.printTimedResult(Signature.class, result, eTime - sTime);
                 return false;
             }
@@ -350,7 +351,7 @@ public class Signature extends ConditionElement {
             if (op == BooleanOperator.OR && result) {
                 logger.debug("step evaluation returned true... nothing more to do");
                 logger.info("------------------------------Sig eval " + this.getId() + " finished with true----------------------");
-                rlogger.reportResultsToLogger(device, this.id, this.getClass().getSimpleName(), true);
+				rlogger.reportResultsToLogger(device, this.id, SIGNATURE, true);
                 super.printTimedResult(Signature.class, result, eTime - sTime);
                 return true;
             }
@@ -359,8 +360,7 @@ public class Signature extends ConditionElement {
 
         logger.info(
                 "--------------------Sig eval " + this.getId() + " finished with " + result + "--------------------");
-        rlogger.reportResultsToLogger(device,
-                this.id, this.getClass().getSimpleName(), result);
+		rlogger.reportResultsToLogger(device, this.id, SIGNATURE, result);
         super.printTimedResult(Signature.class, result, eTime - sTime);
         return result;
     }
@@ -370,7 +370,7 @@ public class Signature extends ConditionElement {
         int idx;
         for (int s = 0; s < scope; s++) {
             idx = root.lastIndexOf(Policy.SUBCAT_KEY);
-            if(idx > 0) { 
+            if(idx > 0) {
                 root = root.substring(0, idx);
             }
         }

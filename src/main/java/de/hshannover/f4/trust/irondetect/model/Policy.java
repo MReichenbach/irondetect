@@ -18,7 +18,7 @@
  * Email: trust@f4-i.fh-hannover.de
  * Website: http://trust.f4.hs-hannover.de/
  * 
- * This file is part of irondetect, version 0.0.8, 
+ * This file is part of irondetect, version 0.0.8,
  * implemented by the Trust@HsH research group at the Hochschule Hannover.
  * %%
  * Copyright (C) 2010 - 2015 Trust@HsH
@@ -42,21 +42,23 @@
 package de.hshannover.f4.trust.irondetect.model;
 
 
+import static de.hshannover.f4.trust.irondetect.gui.ResultObjectType.POLICY;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import de.hshannover.f4.trust.irondetect.gui.ResultLogger;
+import de.hshannover.f4.trust.irondetect.gui.ResultLoggerImpl;
 import de.hshannover.f4.trust.irondetect.policy.parser.treeObjects.SymbolTable;
-import de.hshannover.f4.trust.irondetect.util.event.TrainingData;
-import java.util.HashMap;
 
 /**
  * @author jvieweg
  * 
  */
-public class Policy {
+public class Policy implements PolicyData {
 	
 	public static String COUNT_KEY = "#";
         public static String GET_KEY = "@";
@@ -69,6 +71,8 @@ public class Policy {
 	private SymbolTable symbols;
 	private String id;
 	private HashMap<String, Boolean> firstRun;
+	
+	private ResultLogger rlogger = ResultLoggerImpl.getInstance();
 
 	public Policy() {
 		this.firstRun = new HashMap<String, Boolean>();
@@ -131,6 +135,8 @@ public class Policy {
 				}
 			}
 		}
+		// TODO ist hier zu früh es könnten noch andere geräte durchsucht werden aufgrund des gleichen poll results
+		rlogger.reportResultsToLogger(device, this.id, POLICY, true);
 	}
 
 	/**

@@ -1,0 +1,45 @@
+context {
+	 ctxWorkingHours := DATETIME > "8:00" and DATETIME < "23:00";
+}
+
+hint {
+	hintSMSSentCountMeanDaily := "smartphone.communication.sms.SentCount" "de.hshannover.f4.trust.irondetectprocedures.Mean" "15";
+}
+ 
+anomaly {
+	anomSMSSentCountMeanDaily  := hintSMSSentCountMeanDaily > 0.5 ctxWorkingHours;
+}
+
+signature {
+	sigTest1 := "smartphone.android.app.IsRunning" = "true" and "smartphone.android.app.Author" = "Marcel";
+	sigAppNameFacebook := "smartphone.android.app.Name" = "Facebook";
+	sigFacebookIsRunning := "smartphone.android.app.Name" = "Facebook" and "smartphone.android.app.IsRunning" = "true";
+	sigFacebookIsNotRunning := "smartphone.android.app.Name" = "Facebook" and "smartphone.android.app.IsRunning" = "false";
+}
+
+condition {
+	conFacebookVorhanden := sigAppNameFacebook;
+	conFacebookLaeuft := sigFacebookIsRunning;
+	conFacebookAus := sigFacebookIsNotRunning;
+	conSMSCheck := anomSMSSentCountMeanDaily;
+	conSigTest1 := sigTest1;
+	conTest1 := anomSMSSentCountMeanDaily and sigFacebookIsRunning;
+}
+
+action {
+	acFacebookWarnung := "ACHTUNG Facebook-APP gefunden" "Leiten Sie auf der Stelle Gegenmassnahmen ein!!!" "Test" "muhhTest";
+	acFacebookAusschalten := "ACHTUNG Facebook-APP gefunden und aktive" "Leiten Sie auf der Stelle Gegenmassnahmen ein und um Himmels Willen schalten Sie sie aus!!";
+	acFacebookIstAus := "ACHTUNG Facebook-APP gefunden aber aus" "Das ist schon einmal ein guter anfang und nu runter damit!!!";
+	acSMS := "ACHTUNG SMS TEst" "KA was pasiiert noch aendern";
+	acSigTest1 := "Sig-Test-1" "hat gefeuert";
+	acConTest1 := "Con-Test-1" "hat gefeuert";
+}
+
+rule {
+	facebookVerbot := if conFacebookVorhanden do acFacebookWarnung acFacebookWarnung;
+	facebookIstAn := if conFacebookLaeuft do acFacebookAusschalten;
+	facebookIstAus := if conFacebookAus do acFacebookIstAus;
+	SMS := if conSMSCheck do acSMS;
+	ruleSigTest1 := if conSigTest1 do acSigTest1;
+	ruleConTest1 := if conTest1 do acConTest1;
+}

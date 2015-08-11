@@ -18,7 +18,7 @@
  * Email: trust@f4-i.fh-hannover.de
  * Website: http://trust.f4.hs-hannover.de/
  * 
- * This file is part of irondetect, version 0.0.8, 
+ * This file is part of irondetect, version 0.0.8,
  * implemented by the Trust@HsH research group at the Hochschule Hannover.
  * %%
  * Copyright (C) 2010 - 2015 Trust@HsH
@@ -40,14 +40,14 @@ package de.hshannover.f4.trust.irondetect;
 
 
 
+import javax.swing.DefaultListModel;
+import javax.swing.JProgressBar;
+
 import de.hshannover.f4.trust.irondetect.gui.ResultLoggerImpl;
+import de.hshannover.f4.trust.irondetect.gui.ResultObjectType;
 import de.hshannover.f4.trust.irondetect.util.event.Event;
 import de.hshannover.f4.trust.irondetect.util.event.EventReceiver;
 import de.hshannover.f4.trust.irondetect.util.event.ResultUpdateEvent;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JFrame;
-import javax.swing.JProgressBar;
 
 /**
  *
@@ -83,14 +83,16 @@ public class Detectorgui extends javax.swing.JFrame implements EventReceiver{
 
         jMenu1.setText("File");
         jMenu1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenu1ActionPerformed(evt);
             }
         });
 
         jMenuItem1.setText("Exit irondetect");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            @Override
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem1ActionPerformed(evt);
             }
         });
@@ -119,7 +121,7 @@ public class Detectorgui extends javax.swing.JFrame implements EventReceiver{
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -141,7 +143,8 @@ public class Detectorgui extends javax.swing.JFrame implements EventReceiver{
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
+            @Override
+			public void run() {
                 new Detectorgui().setVisible(true);
             }
         });
@@ -157,10 +160,10 @@ public class Detectorgui extends javax.swing.JFrame implements EventReceiver{
         ResultUpdateEvent ev = (ResultUpdateEvent) e;
         boolean val = ev.getPayload().getValue();
         String dev = ev.getPayload().getDevice();
-        String type = ev.getPayload().getType();
+		ResultObjectType type = ev.getPayload().getType();
         String id = ev.getPayload().getId();
         
-        JProgressBar bar = new JProgressBar();        
+        JProgressBar bar = new JProgressBar();
         String s = type + " " + id + " for dev " + dev.substring(0, 4) + " returned " + val;
         bar.setSize(300, 30);
         bar.setString(s);

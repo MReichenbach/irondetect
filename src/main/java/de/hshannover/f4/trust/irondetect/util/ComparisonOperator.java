@@ -18,7 +18,7 @@
  * Email: trust@f4-i.fh-hannover.de
  * Website: http://trust.f4.hs-hannover.de/
  * 
- * This file is part of irondetect, version 0.0.8, 
+ * This file is part of irondetect, version 0.0.8,
  * implemented by the Trust@HsH research group at the Hochschule Hannover.
  * %%
  * Copyright (C) 2010 - 2015 Trust@HsH
@@ -38,12 +38,31 @@
  */
 package de.hshannover.f4.trust.irondetect.util;
 
-
-
 /**
+ * modified by Marcel Reichenbach
+ *
  * @author rosso
  *
  */
 public enum ComparisonOperator {
 	ST, GT, SE, GE, EQ, NE;
+	
+	public String valueOf(){
+		switch (this) {
+			case EQ:
+				return "=";
+			case NE:
+				return "!=";
+			case ST:
+				return "<";
+			case GT:
+				return ">";
+			case SE:
+				return "<=";
+			case GE:
+				return ">=";
+			default:
+				return "";
+		}
+	}
 }

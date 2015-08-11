@@ -18,7 +18,7 @@
  * Email: trust@f4-i.fh-hannover.de
  * Website: http://trust.f4.hs-hannover.de/
  * 
- * This file is part of irondetect, version 0.0.8, 
+ * This file is part of irondetect, version 0.0.8,
  * implemented by the Trust@HsH research group at the Hochschule Hannover.
  * %%
  * Copyright (C) 2010 - 2015 Trust@HsH
@@ -44,16 +44,20 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
+import de.hshannover.f4.trust.ifmapj.exception.IfmapErrorResult;
+import de.hshannover.f4.trust.ifmapj.exception.IfmapException;
 import de.hshannover.f4.trust.irondetect.engine.Processor;
 import de.hshannover.f4.trust.irondetect.engine.TriggerManager;
 import de.hshannover.f4.trust.irondetect.gui.ResultLoggerImpl;
 import de.hshannover.f4.trust.irondetect.gui.ResultVisualizer;
 import de.hshannover.f4.trust.irondetect.ifmap.ActionToIfmapMapper;
+import de.hshannover.f4.trust.irondetect.ifmap.EndpointPoller;
 import de.hshannover.f4.trust.irondetect.ifmap.IfmapController;
 import de.hshannover.f4.trust.irondetect.ifmap.IfmapToFeatureMapper;
 import de.hshannover.f4.trust.irondetect.importer.Importer;
 import de.hshannover.f4.trust.irondetect.importer.YamlImporter;
 import de.hshannover.f4.trust.irondetect.model.Feature;
+import de.hshannover.f4.trust.irondetect.policy.publisher.PolicyPublisher;
 import de.hshannover.f4.trust.irondetect.repository.FeatureBase;
 import de.hshannover.f4.trust.irondetect.repository.FeatureBaseImpl;
 import de.hshannover.f4.trust.irondetect.util.Configuration;
@@ -68,7 +72,7 @@ import de.hshannover.f4.trust.irondetect.util.Pair;
  *
  */
 public class Main {
-	public static final String VERSION = "0.0.5";
+	public static final String VERSION = "0.0.8";
 
 	private static Logger logger = Logger.getLogger(Main.class);
 
@@ -76,8 +80,7 @@ public class Main {
 		// init log4j
 		URL resource = Main.class.getResource("/log4j.properties");
 		if (resource != null) {
-			System.out.println("URL of log4j properties file: "
-					+ resource.toString());
+			System.out.println("URL of log4j properties file: " + resource.toString());
 			PropertyConfigurator.configure(resource);
 		} else {
 			System.out.println("Couldn't load log4j properties file.");
@@ -90,6 +93,13 @@ public class Main {
 
 		// Create and Start main processing controller
 		Processor processor = Processor.getInstance();
+
+		try {
+			PolicyPublisher policyUpdater = new PolicyPublisher(processor.getPolicy());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IfmapErrorResult
+				| IfmapException e) {
+			logger.error("Error while init PolicyPublisher", e);
+		}
 
 		// Add EventReceivers to FeatureBase
 		FeatureBase fb = FeatureBaseImpl.getInstance();
@@ -131,15 +141,14 @@ public class Main {
 
 		// Create new IF-MAP-to-Feature Mapper
 		IfmapToFeatureMapper ifmapToFeatureMapper = new IfmapToFeatureMapper();
+		EndpointPoller.getInstance().addPollResultReceiver(ifmapToFeatureMapper);
 
 		// Create IF-MAP to Feature mapper
-		Thread mapperThread = new Thread(ifmapToFeatureMapper,
-				"ifmap-to-feature-mapper-thread");
+		Thread mapperThread = new Thread(ifmapToFeatureMapper, "ifmap-to-feature-mapper-thread");
 		mapperThread.start();
 
 		// Start ifmap subscriber for configured pdp device identifiers
-		IfmapController ifmapController = new IfmapController(
-				ifmapToFeatureMapper);
+		IfmapController ifmapController = new IfmapController();
 
 		// Create a new Action-To-IF-MAP Mapper and register the IF-MAP
 		// controller.

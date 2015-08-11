@@ -18,7 +18,7 @@
  * Email: trust@f4-i.fh-hannover.de
  * Website: http://trust.f4.hs-hannover.de/
  * 
- * This file is part of irondetect, version 0.0.8, 
+ * This file is part of irondetect, version 0.0.8,
  * implemented by the Trust@HsH research group at the Hochschule Hannover.
  * %%
  * Copyright (C) 2010 - 2015 Trust@HsH
@@ -80,7 +80,7 @@ public class ResultLoggerImpl implements ResultLogger, Runnable {
 	}
 
 	@Override
-	public void reportResultsToLogger(String device, String id, String type,
+	public void reportResultsToLogger(String device, String id, ResultObjectType type,
 			boolean value) {
 
 		try {
@@ -91,6 +91,19 @@ public class ResultLoggerImpl implements ResultLogger, Runnable {
 					+ e.getMessage());
 		}
 	}
+
+//	@Override
+//	public void reportResultsToLogger(String device, String ruleId, String id, String type,
+//			boolean value) {
+//
+//		try {
+//			this.incomingResults.put(new ResultObject(device, type, id, value));
+//			logger.trace("ResultObject was inserted");
+//		} catch (InterruptedException e) {
+//			logger.error("Could not add ResultObject to ResultLoggerImpl:"
+//					+ e.getMessage());
+//		}
+//	}
 
 	@Override
 	public void run() {

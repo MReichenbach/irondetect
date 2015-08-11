@@ -18,7 +18,7 @@
  * Email: trust@f4-i.fh-hannover.de
  * Website: http://trust.f4.hs-hannover.de/
  * 
- * This file is part of irondetect, version 0.0.8, 
+ * This file is part of irondetect, version 0.0.8,
  * implemented by the Trust@HsH research group at the Hochschule Hannover.
  * %%
  * Copyright (C) 2010 - 2015 Trust@HsH
@@ -39,7 +39,9 @@
 package de.hshannover.f4.trust.irondetect.model;
 
 
-
+import static de.hshannover.f4.trust.irondetect.gui.ResultObjectType.HINT;
+import de.hshannover.f4.trust.irondetect.gui.ResultLogger;
+import de.hshannover.f4.trust.irondetect.gui.ResultLoggerImpl;
 import de.hshannover.f4.trust.irondetect.util.ComparisonOperator;
 import de.hshannover.f4.trust.irondetect.util.Pair;
 
@@ -56,6 +58,8 @@ public class HintExpression extends Evaluable {
 	
 	private Anomaly currentAnomaly;
 	
+	private ResultLogger rlogger = ResultLoggerImpl.getInstance();
+
 	public Anomaly getCurrentAnomaly() {
 		return currentAnomaly;
 	}
@@ -78,10 +82,17 @@ public class HintExpression extends Evaluable {
 		return this.hintValPair;
 	}
 
+	@Override
 	public boolean evaluate(String device) {
-		double actual = hintValPair.getFirstElement().evaluate(device, getCurrentAnomaly());
-		return evaluateCompOpOnNumber(hintValPair.getSecondElement().getFirstElement(), actual,
-				Double.parseDouble(hintValPair.getSecondElement().getSecondElement())); 
+		Hint hint = hintValPair.getFirstElement();
+		double actual = hint.evaluate(device, getCurrentAnomaly());
+		boolean result = evaluateCompOpOnNumber(hintValPair.getSecondElement().getFirstElement(), actual,
+				Double.parseDouble(hintValPair.getSecondElement().getSecondElement()));
+
+		rlogger.reportResultsToLogger(device, hint.getId(), HINT, result);
+
+		return result;
+
 	}
 
 }

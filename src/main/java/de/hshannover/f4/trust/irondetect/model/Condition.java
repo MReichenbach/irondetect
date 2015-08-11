@@ -18,7 +18,7 @@
  * Email: trust@f4-i.fh-hannover.de
  * Website: http://trust.f4.hs-hannover.de/
  * 
- * This file is part of irondetect, version 0.0.8, 
+ * This file is part of irondetect, version 0.0.8,
  * implemented by the Trust@HsH research group at the Hochschule Hannover.
  * %%
  * Copyright (C) 2010 - 2015 Trust@HsH
@@ -42,13 +42,14 @@
 package de.hshannover.f4.trust.irondetect.model;
 
 
+import static de.hshannover.f4.trust.irondetect.gui.ResultObjectType.CONDITION;
 
-import de.hshannover.f4.trust.irondetect.gui.ResultLogger;
-import de.hshannover.f4.trust.irondetect.gui.ResultLoggerImpl;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import de.hshannover.f4.trust.irondetect.gui.ResultLogger;
+import de.hshannover.f4.trust.irondetect.gui.ResultLoggerImpl;
 import de.hshannover.f4.trust.irondetect.util.BooleanOperator;
 import de.hshannover.f4.trust.irondetect.util.Pair;
 
@@ -56,7 +57,7 @@ import de.hshannover.f4.trust.irondetect.util.Pair;
  * @author jvieweg
  *
  */
-public class Condition extends Evaluable{
+public class Condition extends Evaluable implements PolicyData {
 	
 	private static Logger logger = Logger.getLogger(Condition.class);
         private ResultLogger rlogger = ResultLoggerImpl.getInstance();
@@ -104,7 +105,7 @@ public class Condition extends Evaluable{
 		}
 		boolean result = evaluateConditionSet(device);
 		logger.debug("condition " + super.id + " evaluation returned " + result);
-                rlogger.reportResultsToLogger(device, super.id, this.getClass().getSimpleName(), result);
+		rlogger.reportResultsToLogger(device, super.id, CONDITION, result);
 		return result;
 
 	}

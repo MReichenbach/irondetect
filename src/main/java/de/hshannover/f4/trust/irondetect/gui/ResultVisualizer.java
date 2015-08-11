@@ -18,7 +18,7 @@
  * Email: trust@f4-i.fh-hannover.de
  * Website: http://trust.f4.hs-hannover.de/
  * 
- * This file is part of irondetect, version 0.0.8, 
+ * This file is part of irondetect, version 0.0.8,
  * implemented by the Trust@HsH research group at the Hochschule Hannover.
  * %%
  * Copyright (C) 2010 - 2015 Trust@HsH
@@ -81,6 +81,7 @@ public class ResultVisualizer implements EventReceiver {
 			fireTableDataChanged();
 		}
 		
+		@Override
 		public String getColumnName(int col) {
 			switch (col) {
 			case 0:
@@ -103,6 +104,7 @@ public class ResultVisualizer implements EventReceiver {
 		 * each cell. If we didn't implement this method, then the last column
 		 * would contain text ("true"/"false"), rather than a check box.
 		 */
+		@Override
 		public Class<? extends Object> getColumnClass(int c) {
 			return getValueAt(0, c).getClass();
 		}
@@ -209,17 +211,30 @@ public class ResultVisualizer implements EventReceiver {
 		this.panels[type].add(this.labels[type], BorderLayout.NORTH);
 	}
 
-	private int typeToInt(String type) {
-		if (type.equalsIgnoreCase("rule")) {
-			return RULE;
-		} else if (type.equalsIgnoreCase("signature")) {
-			return SIGNATURE;
-		} else if (type.equalsIgnoreCase("anomaly")) {
-			return ANOMALY;
-		} else if (type.equalsIgnoreCase("condition")) {
-			return CONDITION;
-		} else {
-			return -1;
+	private boolean checkResultObjectType(ResultObjectType type) {
+		switch (type) {
+			case RULE:
+			case SIGNATURE:
+			case ANOMALY:
+			case CONDITION:
+				return true;
+			default:
+				return false;
+		}
+	}
+
+	private int typeToInt(ResultObjectType type) {
+		switch (type) {
+			case RULE:
+				return RULE;
+			case SIGNATURE:
+				return SIGNATURE;
+			case ANOMALY:
+				return ANOMALY;
+			case CONDITION:
+				return CONDITION;
+			default:
+				return -1;
 		}
 	}
 	
@@ -227,13 +242,15 @@ public class ResultVisualizer implements EventReceiver {
 	public void submitNewEvent(Event e) {
 		if (e.getType() == EventType.RESULT_UPDATE) {
 			ResultObject ro = ((ResultUpdateEvent) e).getPayload();
-			logger.trace("Received result update: device==" + ro.getDevice()
-					+ ", type==" + ro.getType() + ", id==" + ro.getId()
-					+ ", value==" + ro.getValue() + ", timestamp==" + ro.getTimeStamp());
+			if (checkResultObjectType(ro.getType())) {
+				logger.trace("Received result update: device==" + ro.getDevice()
+						+ ", type==" + ro.getType() + ", id==" + ro.getId()
+						+ ", value==" + ro.getValue() + ", timestamp==" + ro.getTimeStamp());
 
-			final int type = typeToInt(ro.getType());
-			this.tableModels[type].addRow(ro);
-			this.scrollPanes[type].revalidate();
+				final int type = typeToInt(ro.getType());
+				this.tableModels[type].addRow(ro);
+				this.scrollPanes[type].revalidate();
+			}
 		}
 	}
 }

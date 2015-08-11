@@ -18,7 +18,7 @@
  * Email: trust@f4-i.fh-hannover.de
  * Website: http://trust.f4.hs-hannover.de/
  * 
- * This file is part of irondetect, version 0.0.8, 
+ * This file is part of irondetect, version 0.0.8,
  * implemented by the Trust@HsH research group at the Hochschule Hannover.
  * %%
  * Copyright (C) 2010 - 2015 Trust@HsH
@@ -116,11 +116,6 @@ public class IfmapController {
 	 */
 	private SSRC mSsrc;
 
-	/**
-	 * The only IF-MAP to Feature-Mapper
-	 */
-	private IfmapToFeatureMapper mMapper;
-
 	private String mPublisherId;
 
 	private DocumentBuilder documentBuilder;
@@ -135,8 +130,7 @@ public class IfmapController {
 	 * @param ifmapToFeatureMapper
 	 * 
 	 */
-	public IfmapController(IfmapToFeatureMapper ifmapToFeatureMapper) {
-		mMapper = ifmapToFeatureMapper;
+	public IfmapController() {
 		mAlertInstanceNumber = new HashMap<String, Integer>();
 
 		try {
@@ -233,16 +227,15 @@ public class IfmapController {
 				DeviceSearcher.class.getSimpleName());
 		searcherThread.start();
 
-		EndpointPoller poller = null;
+		EndpointPoller poller = EndpointPoller.getInstance();
 		try {
-			poller = new EndpointPoller(mMapper, mSsrc.getArc());
+			poller.setArc(mSsrc.getArc());
 		} catch (InitializationException e) {
 			logger.error("Could not initialize ifmapj: " + e.getMessage() + ", " + e.getCause());
 			System.exit(Constants.RETURN_CODE_ERROR_IFMAPJ_INITIALIZATION_FAILED);
 		}
 
-		Thread pollerThread = new Thread(poller,
-				EndpointPoller.class.getSimpleName());
+		Thread pollerThread = new Thread(poller, EndpointPoller.class.getSimpleName());
 		
 		this.mNewEventPoller = new NewEventPoller(this);
 		Thread eventPollerThread = new Thread(this.mNewEventPoller, NewEventPoller.class.getSimpleName());
@@ -267,7 +260,7 @@ public class IfmapController {
 		SubscribeUpdate subscribeUpdate = Requests.createSubscribeUpdate();
 
 		try {
-			subscribeUpdate.setName(createSHA1(device.getName()).substring(0, 
+			subscribeUpdate.setName(createSHA1(device.getName()).substring(0,
                                 device.getName().length() > 20 ? 19 : device.getName().length()-1));	// TODO FIXME hackhackhack
 		} catch (NoSuchAlgorithmException e) {
 			logger.error("SHA1ing failed.");
@@ -279,7 +272,7 @@ public class IfmapController {
 
 		subscribeUpdate.addNamespaceDeclaration("esukom", Constants.ESUKOM_NAMESPACE_URI);
 
-		synchronized (mSsrc) {			
+		synchronized (mSsrc) {
 			mSsrc.subscribe(Requests.createSubscribeReq(subscribeUpdate));
 		}
 		logger.debug("Subscription done!");
@@ -346,7 +339,7 @@ public class IfmapController {
 				synchronized (mSsrc) {
 					mSsrc.publish(request);
 				}
-				logger.info("New action metadata was published.");					
+				logger.info("New action metadata was published.");
 			} catch (IfmapErrorResult e) {
 				logger.error("Got IfmapErrorResult: "+  e.getMessage() + ", " + e.getCause());
 			} catch (IfmapException e) {
@@ -405,7 +398,7 @@ public class IfmapController {
 		searchRequest.addNamespaceDeclaration(IfmapStrings.STD_METADATA_PREFIX, IfmapStrings.STD_METADATA_NS_URI);
 		try {
 			SearchResult search;
-			synchronized (mSsrc) {				
+			synchronized (mSsrc) {
 				search = mSsrc.search(searchRequest);
 			}
 			List<ResultItem> resultItems = search.getResultItems();

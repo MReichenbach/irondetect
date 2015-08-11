@@ -18,7 +18,7 @@
  * Email: trust@f4-i.fh-hannover.de
  * Website: http://trust.f4.hs-hannover.de/
  * 
- * This file is part of irondetect, version 0.0.8, 
+ * This file is part of irondetect, version 0.0.8,
  * implemented by the Trust@HsH research group at the Hochschule Hannover.
  * %%
  * Copyright (C) 2010 - 2015 Trust@HsH
@@ -42,6 +42,7 @@
 package de.hshannover.f4.trust.irondetect.model;
 
 
+import static de.hshannover.f4.trust.irondetect.gui.ResultObjectType.RULE;
 
 import java.util.List;
 import java.util.Set;
@@ -56,7 +57,7 @@ import de.hshannover.f4.trust.irondetect.gui.ResultLoggerImpl;
  * @author jvieweg
  *
  */
-public class Rule {
+public class Rule implements PolicyData {
 	
 	private Logger logger = Logger.getLogger(this.getClass());
         private ResultLogger rlogger = ResultLoggerImpl.getInstance();
@@ -76,7 +77,7 @@ public class Rule {
 		this.condition.setParent(this);
 		boolean result = this.condition.evaluate(device);
 		logger.info("rule " + getId() + " result was " + result);
-		rlogger.reportResultsToLogger(device, this.id, this.getClass().getSimpleName(), result);
+		rlogger.reportResultsToLogger(device, this.id, RULE, result);
 		// we only perform actions when in testing mode
 		if(result && Processor.getInstance().isTesting()) {
 			for (Action a : actions) {

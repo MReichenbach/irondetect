@@ -69,6 +69,8 @@ public class Configuration {
 	private static final String IRONDETECT_PDPSUBSCRIBER_PASSWORD = "irondetect.pdpsubscriber.password";
 	private static final String IRONDETECT_DEVICESUBSCRIBER_USER = "irondetect.devicesubscriber.user";
 	private static final String IRONDETECT_DEVICESUBSCRIBER_PASSWORD = "irondetect.devicesubscriber.password";
+	private static final String IRONDETECT_POLICYPUBLISHER_USER = "irondetect.PolicyPublisher.user";
+	private static final String IRONDETECT_POLICYPUBLISHER_PASSWORD = "irondetect.PolicyPublisher.password";
 
 	private static final String KEYSTORE_PATH = "keystore.path";
 	private static final String KEYSTORE_PASSWORD = "keystore.password";
@@ -213,5 +215,13 @@ public class Configuration {
 
 	public static boolean loadGUI() {
 		return Boolean.parseBoolean(get(IRONDETECT_GUI));
+	}
+
+	public static String irondetectPolicyPublisherUser() {
+		return get(IRONDETECT_POLICYPUBLISHER_USER);
+	}
+
+	public static String irondetectPolicyPublisherPassword() {
+		return get(IRONDETECT_POLICYPUBLISHER_PASSWORD);
 	}
 }

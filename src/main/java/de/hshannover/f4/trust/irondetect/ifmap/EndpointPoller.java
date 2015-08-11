@@ -18,7 +18,7 @@
  * Email: trust@f4-i.fh-hannover.de
  * Website: http://trust.f4.hs-hannover.de/
  * 
- * This file is part of irondetect, version 0.0.8, 
+ * This file is part of irondetect, version 0.0.8,
  * implemented by the Trust@HsH research group at the Hochschule Hannover.
  * %%
  * Copyright (C) 2010 - 2015 Trust@HsH
@@ -40,6 +40,9 @@ package de.hshannover.f4.trust.irondetect.ifmap;
 
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 
 import de.hshannover.f4.trust.ifmapj.channel.ARC;
@@ -48,25 +51,40 @@ import de.hshannover.f4.trust.ifmapj.exception.IfmapErrorResult;
 import de.hshannover.f4.trust.ifmapj.exception.IfmapException;
 import de.hshannover.f4.trust.ifmapj.messages.PollResult;
 import de.hshannover.f4.trust.irondetect.util.Constants;
+import de.hshannover.f4.trust.irondetect.util.PollResultReceiver;
+import de.hshannover.f4.trust.irondetect.util.PollResultSender;
 
-public class EndpointPoller implements Runnable {
+public class EndpointPoller implements Runnable, PollResultSender {
 
 	private Logger logger = Logger.getLogger(EndpointPoller.class);
 
-	private ARC mArc;
-	private IfmapToFeatureMapper mMapper;
+	private static EndpointPoller instance;
 
-	public EndpointPoller(IfmapToFeatureMapper mapper, ARC arc) {
-		mMapper = mapper;
-		mArc = arc;
+	private ARC mArc;
+
+	private List<PollResultReceiver> mPollResultReceiver;
+
+	private EndpointPoller() {
+		mPollResultReceiver = new ArrayList<PollResultReceiver>();
+	}
+
+	public synchronized static EndpointPoller getInstance() {
+		if (instance == null) {
+			instance = new EndpointPoller();
+		}
+		return instance;
 	}
 
 	@Override
 	public void run() {
+		if (mArc == null) {
+			throw new RuntimeException("The ARC is null. Befor start this thread set the ARC.");
+		}
+
 		while (!Thread.currentThread().isInterrupted()) {
 			try {
 				PollResult pollResult = mArc.poll();
-				mMapper.submitNewSearchResult(pollResult);
+				onNewPollResult(pollResult);
 			} catch (IfmapErrorResult e) {
 				logger.error("Got IfmapError: " + e.getMessage() + ", " + e.getCause());
 			} catch (EndSessionException e) {
@@ -77,5 +95,23 @@ public class EndpointPoller implements Runnable {
 				System.exit(Constants.RETURN_CODE_ERROR_IFMAPJ_EXCEPTION);
 			}
 		}
+	}
+
+	public void setArc(ARC arc) {
+		mArc = arc;
+	}
+
+	@Override
+	public void addPollResultReceiver(PollResultReceiver prReceiver) {
+		if (!this.mPollResultReceiver.contains(prReceiver)) {
+			this.mPollResultReceiver.add(prReceiver);
+		}
+	}
+
+	private void onNewPollResult(PollResult pollResult) {
+		for (PollResultReceiver prReceiver : mPollResultReceiver) {
+			prReceiver.submitNewPollResult(pollResult);
+		}
+		logger.trace("PollResult were send to registered receivers.");
 	}
 }

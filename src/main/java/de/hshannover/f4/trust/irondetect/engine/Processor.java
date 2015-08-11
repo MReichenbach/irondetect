@@ -81,6 +81,10 @@ public class Processor implements EventReceiver, Runnable {
 //	private HashMap<String, Policy> profiles; // FIXME is this needed?
     private boolean isTraining; // TODO state machine
     private Map<String, TrainingData> trainingDataMap;
+
+	public Policy getPolicy() {
+		return policy;
+	}
             
     /**
      * Thread-safe and performant Singleton
